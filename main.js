@@ -156,7 +156,7 @@ function buildStation(i, name) {
   // nameplate hangs BELOW the station (centre.y=0 → text drops downward) so it sits in the
   // clear vertical space under each motif and stays readable instead of overlapping it.
   const lbl = makeLabel(`${i + 1} · ${name}`, 'stage-label', 2.5);
-  lbl.obj.position.y = -0.55; lbl.obj.center.set(0.5, 0); grp.add(lbl.obj);
+  lbl.obj.position.y = -1.05; lbl.obj.center.set(0.5, 0); grp.add(lbl.obj);
   return { grp, pad, ring, node, lbl, name };
 }
 
