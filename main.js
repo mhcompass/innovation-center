@@ -102,7 +102,7 @@ const ARTIFACTS = [
   'Forward-base field trial + reusable knowledge',
 ];
 const N = STAGES.length;
-const STATION_GAP = 6;
+const STATION_GAP = 9;
 const stationX = STAGES.map((_, i) => -((N - 1) / 2) * STATION_GAP + i * STATION_GAP); // centred on 0
 const RAIL_X0 = stationX[0], RAIL_X1 = stationX[N - 1];
 
@@ -163,7 +163,7 @@ function buildStation(i, name) {
   // clear vertical space under each motif. Heights are staggered by parity so adjacent
   // nameplates never collide when the camera pulls wide on the final shot.
   const lbl = makeLabel(`${i + 1} · ${name}`, 'stage-label', 2.5);
-  lbl.obj.position.y = (i % 2) ? -1.7 : -1.05; lbl.obj.center.set(0.5, 0); grp.add(lbl.obj);
+  lbl.obj.position.y = (i % 2) ? -2.1 : -1.0; lbl.obj.center.set(0.5, 0); grp.add(lbl.obj);
   return { grp, pad, ring, node, lbl, name };
 }
 
@@ -866,10 +866,15 @@ resetScene();
 ui.loading.style.display = 'none';
 animate();
 
-if (BEAT_PARAM != null) { // headless: jump to a beat and hold it
+if (BEAT_PARAM != null) { // headless: jump to a beat, snap the camera/token, and hold it
   startStory();
-  storyTime = beats[Math.max(0, Math.min(BEAT_PARAM, beats.length - 1))].t + 0.01;
-  paused = true;
+  const i = Math.max(0, Math.min(BEAT_PARAM, beats.length - 1));
+  const b = beats[i];
+  storyTime = b.t + 0.01; paused = true;
+  targetU = b.stage / (N - 1); token._u = targetU; railPoint(targetU, token.position);
+  if (b.abs) { camAbs = true; camAbsPos.set(b.cam[0], b.cam[1], b.cam[2]); desiredPos.copy(camAbsPos); desiredLook.set(0, 1.2, 0); }
+  else { camAbs = false; camOffset.set(b.cam[0], b.cam[1], b.cam[2]); desiredPos.copy(token.position).add(camOffset); desiredLook.copy(token.position); }
+  camera.position.copy(desiredPos); camera.lookAt(desiredLook);
 }
 
 // ---------- resize ----------
