@@ -91,7 +91,7 @@ function expApproach(v, target, lambda, dt) { v.lerp(target, 1 - Math.exp(-lambd
 //  THE LINEAR TRACK  (a straight rail; the challenge slides station to station)
 // ============================================================
 const RAIL_Y = 0.75;
-const TOKEN_LIFT = 0.375; // drone hovers ~50% higher than the rail line it rides
+const TOKEN_LIFT = 0.9375; // drone hovers well above the rail line it rides (raised in two ~50% steps)
 const STAGES   = ['Mission Framing', 'Knowledge Scan', 'Digital Twin', 'Integration', 'Test & Eval', 'Decision Gate', 'Field Trial'];
 const ARTIFACTS = [
   'Challenge brief — detect & defeat small hostile drones',
