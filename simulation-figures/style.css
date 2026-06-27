@@ -153,17 +153,19 @@ button.ghost:hover{border-color:var(--cyan)}
   background:var(--accent);box-shadow:0 0 7px var(--accent);transform:rotate(45deg);
 }
 
-/* End title card ------------------------------------------------- */
+/* End title card — headline group rides high, paragraph + tags sit low (uses full height) */
 #endcard{
-  position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);
-  width:100%;max-width:780px;text-align:center;padding:0 24px;opacity:0;pointer-events:none;
+  position:absolute;left:50%;top:0;bottom:0;transform:translateX(-50%) translateY(14px);
+  width:100%;max-width:780px;display:flex;flex-direction:column;
+  text-align:center;padding:14vh 24px 12vh;opacity:0;pointer-events:none;
   transition:opacity 1s ease, transform 1.2s ease;
 }
-#endcard.show{opacity:1;transform:translate(-50%,-50%)}
+#endcard.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .end-eyebrow{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted);font-weight:700}
 #endcard h2{font-size:clamp(34px,6vw,66px);line-height:1.03;font-weight:800;letter-spacing:-.02em;margin:14px 0 0}
 #endcard h2 span{color:var(--teal);text-shadow:0 0 40px rgba(62,230,196,.5)}
-#endcard p{margin:18px auto 0;max-width:600px;color:var(--ink);opacity:.8;font-size:17px;line-height:1.6}
+/* margin-top:auto pushes the paragraph (and the OS tags after it) to the bottom of the column */
+#endcard p{margin:auto auto 0;max-width:600px;color:var(--ink);opacity:.8;font-size:17px;line-height:1.6}
 #endcard .os-tags{margin-top:18px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 #endcard .os-tags span{
   font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--muted);
