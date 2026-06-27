@@ -1,0 +1,46 @@
+{
+  "voice": "bm_george",
+  "format": "mp3",
+  "clips": [
+    {
+      "file": "01.mp3",
+      "dur": 6.53,
+      "text": "A real problem: cheap hostile drones can slip over a forward base with little warning."
+    },
+    {
+      "file": "02.mp3",
+      "dur": 6.6,
+      "text": "It enters the center. We scan radar, RF and acoustic sensors, and prior art."
+    },
+    {
+      "file": "03.mp3",
+      "dur": 6.8,
+      "text": "In a digital twin, we tune a sensor-fusion AI against simulated drone swarms."
+    },
+    {
+      "file": "04.mp3",
+      "dur": 6.22,
+      "text": "We integrate a real detect, track and defeat node, and wire the live track feed."
+    },
+    {
+      "file": "05.mp3",
+      "dur": 7.53,
+      "text": "Under live-fly trials on the range, the evidence comes in: detection out to nearly three kilometres."
+    },
+    {
+      "file": "06.mp3",
+      "dur": 4.92,
+      "text": "The evidence is in. Now make the call \u2014 go, iterate, or stop."
+    },
+    {
+      "file": "07.mp3",
+      "dur": 5.4,
+      "text": "Validated, the system transitions to a forward-base field trial."
+    },
+    {
+      "file": "08.mp3",
+      "dur": 7.5,
+      "text": "One threat in, a validated capability out \u2014 and the model and protocol are banked for the next challenge."
+    }
+  ]
+}
