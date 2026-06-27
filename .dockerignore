@@ -1,0 +1,17 @@
+Dockerfile
+.dockerignore
+docker-compose*.yml
+tailscale
+DEPLOY_TAILSCALE.md
+README.md
+.git
+.gitignore
+.DS_Store
+**/.DS_Store
+.claude
+**/__test.html
+**/SCRIPT.md
+**/NARRATION.md
+**/generate*.sh
+**/.*.wav
+**/.gitignore

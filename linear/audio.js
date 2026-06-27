@@ -32,6 +32,10 @@ const Audio = {
 
   resume() { if (ensure() && ctx.state === 'suspended') ctx.resume(); },
 
+  // fully silence the context (used when the page is hidden / navigated away so a
+  // backgrounded demo can't overlap another one)
+  suspend() { if (ctx && ctx.state === 'running') ctx.suspend(); },
+
   startAmbient() {
     if (!ensure() || started) { this.fadeMaster(muted ? 0 : TARGET); return; }
     started = true;

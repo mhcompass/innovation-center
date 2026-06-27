@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Innovation &amp; R&amp;D Center — The Center (Zoned Blueprint · Realistic figures)</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Local (vendored) Three.js — runs fully offline / air-gapped. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./vendor/three/build/three.module.js",
+      "three/addons/": "./vendor/three/addons/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="scene"></div>
+  <div id="vignette"></div>
+  <div id="labels"></div>
+
+  <div id="ui">
+    <!-- Top: brand + progress -->
+    <header id="topbar">
+      <div id="brand">
+        <span class="dot"></span>
+        INNOVATION &amp; R&amp;D CENTER <span class="brand-sub">/ The Center · Realistic</span>
+      </div>
+      <div id="progress" aria-hidden="true"></div>
+    </header>
+
+    <!-- Cluster legend (top-centre) -->
+    <div id="legend" aria-hidden="true">
+      <div class="leg tt"><span class="ldot"></span>Think Tank</div>
+      <div class="leg wf"><span class="ldot"></span>Workshop Floor</div>
+      <div class="leg sc"><span class="ldot"></span>Showcase</div>
+    </div>
+
+    <!-- Center: title card (start) -->
+    <div id="titlecard" class="show">
+      <div class="eyebrow">The Center · Space Zoning Concept</div>
+      <h1>Not a building.<br />A capability you walk through.</h1>
+      <p class="os-line">You're not just building a space — you're building an
+         <b>innovation operating system</b>. The center is its physical form;
+         what makes it work is the methodology, governance, and technology beneath it.</p>
+      <p>Six zones, in three working clusters. Take the guided tour, then explore the floor yourself.</p>
+      <button id="startBtn" class="primary">▶ Tour the center (~50s)</button>
+      <span class="hint">Tip: after the tour, drag to orbit and click any zone to inspect it.</span>
+    </div>
+
+    <!-- Bottom: caption -->
+    <div id="caption"></div>
+
+    <!-- Right-docked zone inspector -->
+    <aside id="zonepanel">
+      <div class="zp-eyebrow" id="zpCluster">Cluster</div>
+      <h3 id="zpTitle">Zone</h3>
+      <p class="zp-purpose" id="zpPurpose"></p>
+      <ul class="zone-cap-list" id="zpCaps"></ul>
+    </aside>
+
+    <!-- End title card -->
+    <div id="endcard">
+      <div class="end-eyebrow">Innovation &amp; R&amp;D Center</div>
+      <h2>Six zones.<br /><span>One capability.</span></h2>
+      <p>The physical expression of an innovation operating system —
+         a place that turns challenges into validated outcomes.</p>
+      <div class="os-tags">
+        <span>Methodology</span><span>Governance</span><span>Technology</span>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <footer id="controls">
+      <button id="replayBtn" class="ghost" hidden>↺ Replay tour</button>
+      <button id="muteBtn" class="ghost" title="Mute / unmute (M)">🔊 Sound</button>
+    </footer>
+
+    <div id="help">Space pause · ← → step zones · R replay · drag to orbit · click a zone</div>
+    <div id="loading">Loading the center…</div>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

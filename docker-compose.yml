@@ -1,0 +1,15 @@
+# Innovation & R&D Center cinematic demos — static Three.js site served by nginx.
+#   web → http://localhost:46750   (landing → /linear/ , /simulation-figures/)
+# Port 46750 avoids flexible-fleet-cinematic (46740), yourcompass-profile (46730)
+# and mindrop (46720/46721).
+name: innovation-center
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: innovation-center-web
+    ports:
+      - "46750:46750"
+    restart: unless-stopped

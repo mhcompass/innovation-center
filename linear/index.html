@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Innovation &amp; R&amp;D Center — Linear Case (Counter-drone / C-UAS)</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Local (vendored) Three.js — runs fully offline / air-gapped. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./vendor/three/build/three.module.js",
+      "three/addons/": "./vendor/three/addons/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="scene"></div>
+  <div id="vignette"></div>
+  <div id="labels"></div>
+
+  <div id="ui">
+    <!-- Top: brand + progress -->
+    <header id="topbar">
+      <div id="brand">
+        <span class="dot"></span>
+        INNOVATION &amp; R&amp;D CENTER <span class="brand-sub">/ Linear Case · Counter-drone</span>
+      </div>
+      <div id="progress" aria-hidden="true"></div>
+    </header>
+
+    <!-- Center: title card (start) -->
+    <div id="titlecard" class="show">
+      <div class="eyebrow">Linear Case Walkthrough</div>
+      <h1>One threat,<br />station by station</h1>
+      <p>A hostile drone appears over the forward base. Watch the counter-drone challenge move
+         down the center's line — station to station — and at the gate, <b>make the call</b>
+         that turns it into a fielded capability.</p>
+      <button id="startBtn" class="primary">▶ Run the case (~60s)</button>
+      <span class="hint">Tip: at the Decision Gate, choose Go / Iterate / Stop. Drag to orbit at the end.</span>
+    </div>
+
+    <!-- Bottom: artifact chip + caption -->
+    <div id="artifact"></div>
+    <div id="caption"></div>
+
+    <!-- Evidence / KPI readout (appears at the Test & Evaluation station) -->
+    <div id="kpi"></div>
+
+    <!-- End title card -->
+    <div id="endcard">
+      <div class="end-eyebrow">Innovation &amp; R&amp;D Center</div>
+      <h2>One threat in.<br /><span>A capability out.</span></h2>
+      <p>The counter-drone system is field-validated — and the sensor-fusion model and test
+         protocol are banked as reusable knowledge for the next challenge.</p>
+    </div>
+
+    <!-- Decision gate -->
+    <div id="gate">
+      <div class="gate-title">DECISION GATE</div>
+      <div class="gate-q">Evidence is in. Make the call.</div>
+      <div class="gate-btns">
+        <button data-decision="go" class="go">Go → Field trial</button>
+        <button data-decision="iterate" class="iterate">Iterate</button>
+        <button data-decision="stop" class="stop">Stop</button>
+      </div>
+      <div class="gate-note">2.8 km detection · 88% intercept · 6% false alarms — field it, or tune further?</div>
+    </div>
+
+    <!-- Controls -->
+    <footer id="controls">
+      <button id="replayBtn" class="ghost" hidden>↺ Replay</button>
+      <button id="muteBtn" class="ghost" title="Mute / unmute (M)">🔊 Sound</button>
+    </footer>
+
+    <div id="help">Space pause · ← → step · R replay · drag to orbit</div>
+    <div id="loading">Loading the case…</div>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

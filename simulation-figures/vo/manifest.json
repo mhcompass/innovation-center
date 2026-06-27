@@ -1,0 +1,46 @@
+{
+  "voice": "bm_george",
+  "format": "mp3",
+  "clips": [
+    {
+      "file": "01.mp3",
+      "dur": 10.47,
+      "text": "An innovation center isn't a building \u2014 it's a capability you can walk through. Six zones, in three working clusters, on one operating system."
+    },
+    {
+      "file": "02.mp3",
+      "dur": 13.78,
+      "text": "It begins in the Think Tank. In Mission Framing, a raw problem becomes a sharp, well-defined challenge \u2014 on writable walls, a live mission board, and in pods secure enough for sensitive work."
+    },
+    {
+      "file": "03.mp3",
+      "dur": 13.7,
+      "text": "Beside it, the Knowledge and Research Hub \u2014 the memory of the center. Technology scouting, threat intelligence, and the archive of past missions, so every challenge leaves reusable knowledge behind."
+    },
+    {
+      "file": "04.mp3",
+      "dur": 14.82,
+      "text": "On the Workshop Floor, the Digital Experimentation Lab proves the idea in software first. Simulation, AI, and a digital twin test a modification a hundred times before a single part is cut."
+    },
+    {
+      "file": "05.mp3",
+      "dur": 15.03,
+      "text": "Beside it, Rapid Prototyping and Integration \u2014 where ideas become things. Metal and polymer printing, an electronics bench, and a bay where a wearable is instrumented and read by AI in real time."
+    },
+    {
+      "file": "06.mp3",
+      "dur": 15.22,
+      "text": "In the Showcase wing, Test and Evaluation puts the prototype under control. Instrumented rigs and repeatable protocols turn a promising demonstrator into hard evidence, before anything reaches the field."
+    },
+    {
+      "file": "07.mp3",
+      "dur": 12.95,
+      "text": "And the Demonstration area, where the center tells its story \u2014 live stations for leadership and partners, an idea-to-field timeline, and a gallery that attracts talent, vendors, and budget."
+    },
+    {
+      "file": "08.mp3",
+      "dur": 10.32,
+      "text": "Six zones. One capability \u2014 the physical expression of an innovation operating system, turning challenges into validated outcomes."
+    }
+  ]
+}

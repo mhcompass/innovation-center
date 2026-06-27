@@ -720,6 +720,16 @@ function toggleMute() {
 }
 ui.mute.addEventListener('click', toggleMute);
 
+// Silence this demo whenever its page is hidden or navigated away (e.g. switching
+// between the landing page and the other demo) so a backgrounded/bfcached page can't
+// keep playing and overlap the one in view. Resume only if it was mid-play.
+function silenceOnLeave() { try { VO.stop(); Audio.suspend(); } catch (e) {} }
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) silenceOnLeave();
+  else if (playing) Audio.resume();
+});
+window.addEventListener('pagehide', silenceOnLeave);
+
 // presenter keyboard controls
 window.addEventListener('keydown', (e) => {
   if (e.key === ' ') { e.preventDefault(); if (playing && !gateOpen) paused = !paused; }

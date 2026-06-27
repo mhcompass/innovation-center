@@ -3,81 +3,61 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Innovation &amp; R&amp;D Center — Linear Case (Counter-drone / C-UAS)</title>
-  <link rel="stylesheet" href="style.css" />
-  <!-- Local (vendored) Three.js — runs fully offline / air-gapped. -->
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "./vendor/three/build/three.module.js",
-      "three/addons/": "./vendor/three/addons/"
-    }
-  }
-  </script>
+  <title>Innovation &amp; R&amp;D Center — Cinematic case walkthroughs</title>
+  <style>
+    :root{ --amber:#ffb24d; --cyan:#56b8ff; --teal:#3ee6c4; --ink:#eaf2ff; --muted:#8ea4c4; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%;background:#03050a;color:var(--ink);
+      font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+    body{background:radial-gradient(ellipse at 50% 28%, #0b1426 0%, #070b16 56%, #03050a 100%);
+      min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;gap:10px;padding:22px 30px;font-size:13px;letter-spacing:.2em;font-weight:800}
+    header .dot{width:9px;height:9px;border-radius:50%;background:var(--teal);box-shadow:0 0 12px var(--teal)}
+    header .sub{color:var(--muted);font-weight:500;letter-spacing:.1em}
+    main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px 64px}
+    .eyebrow{font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:16px}
+    h1{font-size:clamp(34px,6vw,66px);line-height:1.04;font-weight:800;letter-spacing:-.02em}
+    h1 span{color:var(--teal);text-shadow:0 0 40px rgba(62,230,196,.45)}
+    .lede{max-width:640px;margin:18px auto 44px;color:var(--muted);font-size:16px;line-height:1.6}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;width:100%;max-width:880px}
+    a.card{display:block;text-align:left;text-decoration:none;color:inherit;padding:26px;border-radius:18px;
+      border:1px solid rgba(86,184,255,.18);background:rgba(10,18,32,.6);backdrop-filter:blur(8px);
+      transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease}
+    a.card:hover{transform:translateY(-4px);border-color:var(--cyan);box-shadow:0 16px 50px rgba(86,184,255,.18)}
+    .card .tag{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;color:var(--cyan)}
+    .card.amber .tag{color:var(--amber)}
+    .card h2{font-size:24px;font-weight:800;margin:10px 0 8px;letter-spacing:-.01em}
+    .card p{color:var(--muted);font-size:14px;line-height:1.55}
+    .card .go{margin-top:18px;display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--cyan)}
+    .card.amber .go{color:var(--amber)}
+    footer{padding:22px 30px;color:var(--muted);font-size:12px;letter-spacing:.06em;opacity:.7;text-align:center}
+  </style>
 </head>
 <body>
-  <div id="scene"></div>
-  <div id="vignette"></div>
-  <div id="labels"></div>
-
-  <div id="ui">
-    <!-- Top: brand + progress -->
-    <header id="topbar">
-      <div id="brand">
-        <span class="dot"></span>
-        INNOVATION &amp; R&amp;D CENTER <span class="brand-sub">/ Linear Case · Counter-drone</span>
-      </div>
-      <div id="progress" aria-hidden="true"></div>
-    </header>
-
-    <!-- Center: title card (start) -->
-    <div id="titlecard" class="show">
-      <div class="eyebrow">Linear Case Walkthrough</div>
-      <h1>One threat,<br />station by station</h1>
-      <p>A hostile drone appears over the forward base. Watch the counter-drone challenge move
-         down the center's line — station to station — and at the gate, <b>make the call</b>
-         that turns it into a fielded capability.</p>
-      <button id="startBtn" class="primary">▶ Run the case (~60s)</button>
-      <span class="hint">Tip: at the Decision Gate, choose Go / Iterate / Stop. Drag to orbit at the end.</span>
+  <header><span class="dot"></span> INNOVATION &amp; R&amp;D CENTER <span class="sub">/ cinematic case walkthroughs</span></header>
+  <main>
+    <div class="eyebrow">From challenge to outcome</div>
+    <h1>See how a challenge <span>becomes capability</span>.</h1>
+    <p class="lede">Two self-running, cinematic walkthroughs of how the center takes a real mission
+       challenge through its method — to a fielded capability and reusable knowledge. Each plays
+       itself, fully on-prem and air-gapped. Pick a view.</p>
+    <div class="cards">
+      <a class="card" href="linear/">
+        <div class="tag">Linear view</div>
+        <h2>Linear Case · Counter-drone</h2>
+        <p>A counter-drone (C-UAS) challenge slides station to station down a straight track —
+           framing, scan, digital twin, integration, test &amp; eval, the decision gate, field trial.</p>
+        <span class="go">Run the case →</span>
+      </a>
+      <a class="card amber" href="simulation-figures/">
+        <div class="tag">Zoned view</div>
+        <h2>The Center · Zoned Blueprint</h2>
+        <p>The center as space, not a building — an isometric floor plan of six zones in three
+           working clusters, on one operating system, with the team walking through it.</p>
+        <span class="go">Walk the center →</span>
+      </a>
     </div>
-
-    <!-- Bottom: artifact chip + caption -->
-    <div id="artifact"></div>
-    <div id="caption"></div>
-
-    <!-- Evidence / KPI readout (appears at the Test & Evaluation station) -->
-    <div id="kpi"></div>
-
-    <!-- End title card -->
-    <div id="endcard">
-      <div class="end-eyebrow">Innovation &amp; R&amp;D Center</div>
-      <h2>One threat in.<br /><span>A capability out.</span></h2>
-      <p>The counter-drone system is field-validated — and the sensor-fusion model and test
-         protocol are banked as reusable knowledge for the next challenge.</p>
-    </div>
-
-    <!-- Decision gate -->
-    <div id="gate">
-      <div class="gate-title">DECISION GATE</div>
-      <div class="gate-q">Evidence is in. Make the call.</div>
-      <div class="gate-btns">
-        <button data-decision="go" class="go">Go → Field trial</button>
-        <button data-decision="iterate" class="iterate">Iterate</button>
-        <button data-decision="stop" class="stop">Stop</button>
-      </div>
-      <div class="gate-note">2.8 km detection · 88% intercept · 6% false alarms — field it, or tune further?</div>
-    </div>
-
-    <!-- Controls -->
-    <footer id="controls">
-      <button id="replayBtn" class="ghost" hidden>↺ Replay</button>
-      <button id="muteBtn" class="ghost" title="Mute / unmute (M)">🔊 Sound</button>
-    </footer>
-
-    <div id="help">Space pause · ← → step · R replay · drag to orbit</div>
-    <div id="loading">Loading the case…</div>
-  </div>
-
-  <script type="module" src="main.js"></script>
+  </main>
+  <footer>Self-contained Three.js · scripted &amp; synthetic · on-prem &amp; air-gapped</footer>
 </body>
 </html>

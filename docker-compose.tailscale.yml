@@ -1,0 +1,50 @@
+# Tailscale sidecar — publishes the demos on your tailnet as
+# https://innovation-center.<your-tailnet>.ts.net (its own MagicDNS node), with
+# automatic HTTPS via Tailscale Serve. Private to the tailnet (not Funnel).
+#
+# Prereqs (Tailscale admin console, one-time):
+#   - DNS  -> enable MagicDNS
+#   - DNS  -> enable HTTPS Certificates
+#   - Keys -> generate an auth key (reusable; tag it e.g. tag:innovation if you use ACL tags)
+#
+# Run on spark (where the repo lives):
+#   export TS_AUTHKEY=tskey-auth-xxxxxxxx
+#   docker compose -f docker-compose.yml -f docker-compose.tailscale.yml \
+#       --profile production up -d --build
+#
+# The node appears in your tailnet within a few seconds; the TLS cert is
+# provisioned on first request. Then open https://innovation-center.<tailnet>.ts.net .
+#
+# The site is fully static + single-origin (nginx serves everything incl. the
+# voiceover audio over HTTPS, so the Web-Audio analyser works), so there's
+# nothing extra to configure.
+#
+# To rename the node, change `hostname` + `TS_HOSTNAME` below (the URL follows).
+
+services:
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: innovation-center-tailscale
+    hostname: innovation-center
+    restart: unless-stopped
+    environment:
+      # Auth key is required; the :? makes compose fail fast if it's unset.
+      TS_AUTHKEY: ${TS_AUTHKEY:?set TS_AUTHKEY to a Tailscale auth key}
+      # MagicDNS node name -> https://innovation-center.<tailnet>.ts.net
+      TS_HOSTNAME: innovation-center
+      TS_STATE_DIR: /var/lib/tailscale
+      # Userspace networking: no NET_ADMIN / /dev/net/tun needed; coexists with
+      # spark's host tailscaled.
+      TS_USERSPACE: "true"
+      # Reverse-proxy config (proxies :443 -> the web container on :46750).
+      TS_SERVE_CONFIG: /config/serve.json
+    volumes:
+      - tailscale_state:/var/lib/tailscale
+      - ./tailscale/serve.json:/config/serve.json:ro
+    depends_on:
+      - web
+    profiles:
+      - production
+
+volumes:
+  tailscale_state:
