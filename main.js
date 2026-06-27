@@ -10,7 +10,7 @@ import Audio from './audio.js';
 // ---------- palette ----------
 // Same brand colours as the other pieces; `threat` is the hostile-drone red used for the
 // travelling challenge until it is neutralised/validated (then it lerps to teal).
-const COL = { amber: 0xffb24d, cyan: 0x56b8ff, teal: 0x3ee6c4, threat: 0xff6a4d, dim: 0x243a5c, edge: 0x03050a };
+const COL = { amber: 0xffb24d, cyan: 0x56b8ff, teal: 0x3ee6c4, threat: 0xff2247, dim: 0x243a5c, edge: 0x03050a };
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ---------- renderer / scene / camera ----------
@@ -153,7 +153,10 @@ function buildStation(i, name) {
   // station-specific motif (sits on the pad)
   buildMotif(i, grp);
 
-  const lbl = makeLabel(`${i + 1} · ${name}`, 'stage-label', 2.5); lbl.obj.position.y = 0; grp.add(lbl.obj);
+  // nameplate hangs BELOW the station (centre.y=0 → text drops downward) so it sits in the
+  // clear vertical space under each motif and stays readable instead of overlapping it.
+  const lbl = makeLabel(`${i + 1} · ${name}`, 'stage-label', 2.5);
+  lbl.obj.position.y = -0.55; lbl.obj.center.set(0.5, 0); grp.add(lbl.obj);
   return { grp, pad, ring, node, lbl, name };
 }
 
@@ -387,8 +390,9 @@ scene.add(flow);
 // ============================================================
 const token = new THREE.Group(); scene.add(token);
 const tokBody = new THREE.Mesh(new THREE.IcosahedronGeometry(0.34, 0), glowMat(COL.threat, 1)); token.add(tokBody);
-const tokHalo = new THREE.Mesh(new THREE.SphereGeometry(0.7, 24, 24),
-  new THREE.MeshBasicMaterial({ color: COL.threat, transparent: true, opacity: 0.16, toneMapped: false })); token.add(tokHalo);
+// tight, faint halo — keeps the drone reading as a solid neon object instead of a dispersed glow cloud
+const tokHalo = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24),
+  new THREE.MeshBasicMaterial({ color: COL.threat, transparent: true, opacity: 0.07, toneMapped: false })); token.add(tokHalo);
 // X-frame arms (quad-rotor motif), rotor rings, and an underslung sensor gimbal
 const arms = [Math.PI / 4, -Math.PI / 4].map(rot => {
   const a = new THREE.Mesh(new THREE.BoxGeometry(1.28, 0.04, 0.06), glowMat(COL.threat, 0.8));
@@ -415,7 +419,7 @@ const trailPos = new Float32Array(TRAIL * 3), trailCol = new Float32Array(TRAIL 
 trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPos, 3));
 trailGeo.setAttribute('color', new THREE.BufferAttribute(trailCol, 3));
 const trail = new THREE.Points(trailGeo, new THREE.PointsMaterial({
-  size: 0.3, vertexColors: true, transparent: true, opacity: 0.9,
+  size: 0.24, vertexColors: true, transparent: true, opacity: 0.8,
   blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
 scene.add(trail);
 
@@ -741,7 +745,7 @@ function animate() {
   if (adoptOn) tokColor.lerp(teal, dt * 1.2);                    // neutralised → becomes our capability
   tokParts.forEach(p => p.material.color.copy(tokColor));
   cone.material.color.copy(tokColor);
-  cone.material.opacity = THREE.MathUtils.damp(cone.material.opacity, adoptOn ? 0.02 : 0.14, 3, dt); // threat cone fades when defeated
+  cone.material.opacity = THREE.MathUtils.damp(cone.material.opacity, adoptOn ? 0.02 : 0.10, 3, dt); // threat cone fades when defeated
 
   // token trail
   for (let i = TRAIL - 1; i > 0; i--) {

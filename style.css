@@ -25,17 +25,22 @@ html,body{height:100%;overflow:hidden;background:#03050a;color:var(--ink)}
 }
 
 /* CSS2D labels */
+/* Stage nameplates — pushed down below each station (see main.js) and given a
+   dark pill so the white text stays readable against bright motifs (no white-on-white). */
 .stage-label{
-  font-size:11px;letter-spacing:.14em;font-weight:600;text-transform:uppercase;
-  color:var(--ink);white-space:nowrap;opacity:.32;transition:opacity .4s, color .4s;
-  text-shadow:0 1px 6px rgba(0,0,0,.85);
+  font-size:15px;letter-spacing:.12em;font-weight:800;text-transform:uppercase;
+  color:#fff;white-space:nowrap;opacity:.46;transition:opacity .4s, color .4s, background .4s, border-color .4s;
+  text-shadow:0 1px 2px #000, 0 2px 10px rgba(0,0,0,.95);
+  padding:5px 13px;border-radius:999px;
+  background:rgba(4,8,16,.55);border:1px solid rgba(120,170,255,.18);
+  backdrop-filter:blur(3px);
 }
-.stage-label.active{opacity:1}
-.stage-label.done{opacity:.65;color:var(--teal)}
+.stage-label.active{opacity:1;background:rgba(4,8,16,.74);border-color:rgba(86,184,255,.55)}
+.stage-label.done{opacity:.72;color:var(--teal);border-color:rgba(62,230,196,.3)}
 .cap-label{
-  font-size:10px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;
-  color:var(--muted);white-space:nowrap;opacity:.5;transition:opacity .5s, color .5s;
-  text-shadow:0 1px 6px rgba(0,0,0,.85);
+  font-size:12px;letter-spacing:.2em;font-weight:800;text-transform:uppercase;
+  color:var(--muted);white-space:nowrap;opacity:.64;transition:opacity .5s, color .5s;
+  text-shadow:0 1px 2px #000, 0 2px 10px rgba(0,0,0,.95);
 }
 .cap-label.physical.lit{color:var(--amber);opacity:1}
 .cap-label.digital.lit{color:var(--cyan);opacity:1}
@@ -112,7 +117,7 @@ button.ghost:hover{border-color:var(--cyan)}
 
 /* Artifact chip */
 #artifact{
-  position:absolute;left:50%;bottom:150px;transform:translateX(-50%) translateY(8px);
+  position:absolute;left:50%;bottom:228px;transform:translateX(-50%) translateY(8px);
   display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.18em;font-weight:700;
   text-transform:uppercase;color:var(--cyan);opacity:0;transition:opacity .5s, transform .5s;
   padding:6px 14px;border:1px solid var(--line);border-radius:999px;background:var(--panel);
@@ -121,12 +126,14 @@ button.ghost:hover{border-color:var(--cyan)}
 #artifact.show{opacity:1;transform:translateX(-50%) translateY(0)}
 #artifact::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
 
-/* Caption */
+/* Caption — lifted up, larger + heavier, with a soft dark scrim so it reads over busy scenes */
 #caption{
-  position:absolute;left:50%;bottom:96px;transform:translateX(-50%) translateY(10px);
-  text-align:center;font-size:clamp(18px,2.4vw,26px);font-weight:600;letter-spacing:.01em;
-  max-width:80%;opacity:0;transition:opacity .6s ease, transform .6s ease;
-  text-shadow:0 2px 20px rgba(0,0,0,.9);
+  position:absolute;left:50%;bottom:122px;transform:translateX(-50%) translateY(10px);
+  text-align:center;font-size:clamp(22px,3vw,34px);font-weight:800;letter-spacing:.005em;
+  line-height:1.25;max-width:80%;opacity:0;transition:opacity .6s ease, transform .6s ease;
+  color:#fff;padding:10px 26px;border-radius:18px;
+  text-shadow:0 2px 4px #000, 0 3px 22px rgba(0,0,0,.95);
+  background:radial-gradient(ellipse at center, rgba(2,4,9,.6) 0%, rgba(2,4,9,.34) 55%, transparent 80%);
 }
 #caption.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -141,7 +148,7 @@ button.ghost:hover{border-color:var(--cyan)}
 .end-eyebrow{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted);font-weight:700}
 #endcard h2{font-size:clamp(34px,6vw,68px);line-height:1.03;font-weight:800;letter-spacing:-.02em;margin:14px 0 0}
 #endcard h2 span{color:var(--teal);text-shadow:0 0 40px rgba(62,230,196,.5)}
-#endcard p{margin:18px auto 0;max-width:560px;color:var(--ink);opacity:.8;font-size:17px;line-height:1.6}
+#endcard p{margin:40px auto 0;max-width:560px;color:var(--ink);opacity:.8;font-size:17px;line-height:1.6}
 
 /* Controls + help */
 #controls{position:absolute;left:0;right:0;bottom:26px;display:flex;justify-content:center;gap:12px}
