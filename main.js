@@ -13,6 +13,12 @@ import Audio from './audio.js';
 const COL = { amber: 0xffb24d, cyan: 0x56b8ff, teal: 0x3ee6c4, threat: 0xff2247, dim: 0x243a5c, edge: 0x03050a };
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// verification hooks (harmless in normal use): ?beat=N jumps to + holds a beat,
+// ?fixeddt forces a fixed dt so damped motion/camera still resolve under headless virtual-time.
+const PARAMS = new URLSearchParams(location.search);
+const FIXED_DT = PARAMS.has('fixeddt');
+const BEAT_PARAM = PARAMS.has('beat') ? parseInt(PARAMS.get('beat'), 10) : null;
+
 // ---------- renderer / scene / camera ----------
 const host = document.getElementById('scene');
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -695,7 +701,7 @@ function resetScene() {
     { k: 'Intercept rate', v: '88%', good: true }, { k: 'False-alarm rate', v: '6%', good: true },
   ];
   renderKPI();
-  subLabels.forEach(l => l.classList.remove('lit'));
+  subLabels.forEach(l => { l.classList.remove('lit'); l.style.opacity = ''; });
   setActiveStage(-1);
   const p0 = railPoint(0, new THREE.Vector3()); token.position.copy(p0); token._u = 0;
   for (let i = 0; i < TRAIL; i++) { trailPos[i*3] = p0.x; trailPos[i*3+1] = p0.y; trailPos[i*3+2] = p0.z; }
@@ -730,7 +736,7 @@ const tmp = new THREE.Vector3(), tmpC = new THREE.Color(), teal = new THREE.Colo
 
 function animate() {
   requestAnimationFrame(animate);
-  const dt = Math.min(clock.getDelta(), 0.05), time = clock.elapsedTime;
+  const dt = FIXED_DT ? 0.05 : Math.min(clock.getDelta(), 0.05), time = clock.elapsedTime;
 
   if (playing && !paused) storyTime += dt;
   if (playing) updateStory(storyTime);
@@ -787,8 +793,11 @@ function animate() {
   }
   flowGeo.attributes.position.needsUpdate = true;
 
-  // operating-system substrate lights up once the capability layers engage
-  subLabels.forEach(l => l.classList.toggle('lit', capLit));
+  // operating-system substrate lights up once the capability layers engage; on the final
+  // wide shot the Methodology/Governance/Technology labels fade so they don't collide with
+  // the station nameplates (the summary row is what should read there).
+  const onFinale = beatIdx === beats.length - 1;
+  subLabels.forEach(l => { l.classList.toggle('lit', capLit); l.style.opacity = onFinale ? '0' : ''; });
   substrate.material.opacity = THREE.MathUtils.damp(substrate.material.opacity, capLit ? 0.42 : 0.18, 2, dt);
 
   // evidence brackets
@@ -856,6 +865,12 @@ function animate() {
 resetScene();
 ui.loading.style.display = 'none';
 animate();
+
+if (BEAT_PARAM != null) { // headless: jump to a beat and hold it
+  startStory();
+  storyTime = beats[Math.max(0, Math.min(BEAT_PARAM, beats.length - 1))].t + 0.01;
+  paused = true;
+}
 
 // ---------- resize ----------
 window.addEventListener('resize', () => {
