@@ -91,6 +91,7 @@ function expApproach(v, target, lambda, dt) { v.lerp(target, 1 - Math.exp(-lambd
 //  THE LINEAR TRACK  (a straight rail; the challenge slides station to station)
 // ============================================================
 const RAIL_Y = 0.75;
+const TOKEN_LIFT = 0.375; // drone hovers ~50% higher than the rail line it rides
 const STAGES   = ['Mission Framing', 'Knowledge Scan', 'Digital Twin', 'Integration', 'Test & Eval', 'Decision Gate', 'Field Trial'];
 const ARTIFACTS = [
   'Challenge brief — detect & defeat small hostile drones',
@@ -745,7 +746,7 @@ function animate() {
   token._u = THREE.MathUtils.damp(token._u ?? 0, THREE.MathUtils.clamp(targetU, 0, 1), 2.4, dt);
   railPoint(token._u, tmp);
   adoptLift = THREE.MathUtils.damp(adoptLift, adoptOn ? 1.1 : 0, 2, dt);
-  token.position.copy(tmp); token.position.y += adoptLift + (reducedMotion ? 0 : Math.sin(time * 1.6) * 0.06);
+  token.position.copy(tmp); token.position.y += TOKEN_LIFT + adoptLift + (reducedMotion ? 0 : Math.sin(time * 1.6) * 0.06);
   const pulse = reducedMotion ? 1 : 1 + Math.sin(time * 4) * 0.06;
   tokBody.scale.setScalar(pulse); tokHalo.scale.setScalar(1 + Math.sin(time * 2.5) * 0.12);
   tokBody.rotation.y += dt * 0.6; tokBody.rotation.x += dt * 0.3;
@@ -871,7 +872,7 @@ if (BEAT_PARAM != null) { // headless: jump to a beat, snap the camera/token, an
   const i = Math.max(0, Math.min(BEAT_PARAM, beats.length - 1));
   const b = beats[i];
   storyTime = b.t + 0.01; paused = true;
-  targetU = b.stage / (N - 1); token._u = targetU; railPoint(targetU, token.position);
+  targetU = b.stage / (N - 1); token._u = targetU; railPoint(targetU, token.position); token.position.y += TOKEN_LIFT;
   if (b.abs) { camAbs = true; camAbsPos.set(b.cam[0], b.cam[1], b.cam[2]); desiredPos.copy(camAbsPos); desiredLook.set(0, 1.2, 0); }
   else { camAbs = false; camOffset.set(b.cam[0], b.cam[1], b.cam[2]); desiredPos.copy(token.position).add(camOffset); desiredLook.copy(token.position); }
   camera.position.copy(desiredPos); camera.lookAt(desiredLook);
