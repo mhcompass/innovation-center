@@ -108,6 +108,22 @@ function radialTexture(r, g, b) {
   x.fillStyle = grd; x.fillRect(0, 0, 256, 256);
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
 }
+// the zone name as a glowing floor marking — spaced caps, auto-fit to width, drawn upright so it
+// reads correctly once the plane is laid flat and faces the (front / +Z) tour camera.
+const FLOORLBL_W = 1024, FLOORLBL_H = 220;
+function floorLabelTexture(text, hex) {
+  const c = document.createElement('canvas'); c.width = FLOORLBL_W; c.height = FLOORLBL_H;
+  const x = c.getContext('2d');
+  const css = hex2css(hex), label = text.toUpperCase();
+  try { x.letterSpacing = '3px'; } catch (e) {}
+  let fs = 116; const font = s => `800 ${s}px ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif`;
+  x.font = font(fs);
+  while (x.measureText(label).width > FLOORLBL_W - 70 && fs > 34) { fs -= 4; x.font = font(fs); }
+  x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.shadowColor = css; x.shadowBlur = 22;
+  x.fillStyle = css; x.fillText(label, FLOORLBL_W / 2, FLOORLBL_H / 2 + 4);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+}
 
 // ---------- star / dust field ----------
 (function dust() {
@@ -392,12 +408,18 @@ const zoneObjs = ZONES.map((z, i) => {
   const built = buildZoneProps(i, propGrp, cl.color);
   const propMats = built.mats, figures = built.figs;
 
-  // floating label (number + name) — clears the props above the tile
-  const lbl = makeLabel('', 'zone-label', tileH + 3.2);
-  lbl.el.innerHTML = `<span class="znum">${z.n}</span>${z.name}`;
-  grp.add(lbl.obj);
+  // zone name laid flat on the tile floor as a glowing floor marking, set near the front (+Z) edge
+  // so the furnishings/figures in the middle of the tile don't cover it
+  const decalH = (tileW - 1) * FLOORLBL_H / FLOORLBL_W;
+  const nameDecal = new THREE.Mesh(
+    new THREE.PlaneGeometry(tileW - 1, decalH),
+    new THREE.MeshBasicMaterial({ map: floorLabelTexture(z.name, cl.color), transparent: true,
+      opacity: 0.5, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
+  nameDecal.rotation.x = -Math.PI / 2;
+  nameDecal.position.set(0, tileH + 0.03, tileD / 2 - 0.2 - decalH / 2);
+  grp.add(nameDecal);
 
-  return { z, cl, grp, fill, edges, glow, propMats, figures, lbl };
+  return { z, cl, grp, fill, edges, glow, propMats, figures, nameDecal };
 });
 
 // cluster banner labels (above each column)
@@ -435,6 +457,11 @@ const legEls = { A: ui.legend.querySelector('.tt'), B: ui.legend.querySelector('
 // voiceover — pre-rendered clips, one per beat. Plays if present, else caption-only.
 const VO = {
   available: false, files: [], dur: [], el: new window.Audio(),
+  // Live-clip tracking so the tour can wait for narration to actually finish (see updateStory).
+  // `playingIdx` = beat whose clip is loaded; `clipEnded` flips true on the audio 'ended' event
+  // (or on any load/play failure); `holdUntil` is a real-time watchdog so a clip that stalls and
+  // never fires 'ended' can't freeze the tour.
+  playingIdx: -1, clipEnded: true, holdUntil: 0,
   async init() {
     try {
       const r = await fetch('vo/manifest.json', { cache: 'no-store' });
@@ -444,15 +471,19 @@ const VO = {
       this.dur = m.clips.map(c => c.dur);
       this.available = true; this.el.preload = 'auto'; this.el.volume = 0.95;
       if (this.dur.length === beats.length) paceBeats(this.dur);   // sync the tour to the narration
-      this.el.addEventListener('ended', () => Audio.duck(false));
+      this.el.addEventListener('ended', () => { this.clipEnded = true; Audio.duck(false); });
     } catch (e) { /* no VO — captions carry the story */ }
   },
   play(i) {
-    if (!this.available || Audio.muted || !this.files[i]) return;
+    if (!this.available || Audio.muted || !this.files[i]) { this.playingIdx = -1; this.clipEnded = true; return; }
+    this.playingIdx = i; this.clipEnded = false;
+    this.holdUntil = clock.elapsedTime + (this.dur[i] || 12) + 4;   // never wait past clip length + slack
     try { this.el.pause(); this.el.currentTime = 0; this.el.src = this.files[i];
-      this.el.play().then(() => Audio.duck(true)).catch(() => {}); } catch (e) {}
+      this.el.play().then(() => Audio.duck(true)).catch(() => { this.clipEnded = true; }); } catch (e) { this.clipEnded = true; }
   },
-  stop() { try { this.el.pause(); } catch (e) {} Audio.duck(false); },
+  // is beat `i`'s narration still playing (so the scene should hold on it)?
+  talking(i) { return this.playingIdx === i && !this.clipEnded && clock.elapsedTime < this.holdUntil; },
+  stop() { try { this.el.pause(); } catch (e) {} this.playingIdx = -1; this.clipEnded = true; Audio.duck(false); },
 };
 VO.init();
 
@@ -497,6 +528,9 @@ const desiredPos = new THREE.Vector3();
 const desiredLook = new THREE.Vector3(0, 0, 0);
 const exploreTarget = new THREE.Vector3(0, 0, 0);
 const camOffset = new THREE.Vector3(0, 26, 38);
+// Damped rig position, kept separate from camera.position so the handheld sway (added below) is a
+// clean fixed-amplitude offset and never gets fed back into the damp (which amplified it into a shake).
+const camBase = new THREE.Vector3(0, 26, 40);
 
 const tileCenter = i => new THREE.Vector3(ZONES[i].x, 1.4, ZONES[i].z);
 
@@ -523,7 +557,6 @@ function fireRipple(i) {
 function setActiveZone(i) {
   if (i === activeZone) return;
   activeZone = i;
-  zoneObjs.forEach((o, k) => o.lbl.el.classList.toggle('active', k === i));
   pips.forEach((p, k) => { p.classList.toggle('active', k === i); p.classList.toggle('done', i >= 0 && k < i); });
   ['A', 'B', 'C'].forEach(k => {
     const on = i >= 0 && ZONES[i].cl === k;
@@ -544,6 +577,12 @@ function triggerFinale() {
 // timeline driver ------------------------------------------------
 function updateStory(t) {
   let idx = 0; for (let i = 0; i < beats.length; i++) if (t >= beats[i].t) idx = i;
+  // Hold on the current beat until its narration clip has actually finished. The wall clock can
+  // outrun the audio on a deployed server — per-clip network buffering delays when a clip starts,
+  // and a late manifest load leaves the (shorter) DEFAULT_DURS pacing in effect — which otherwise
+  // cuts the scene to the next zone while the voice is still talking. Park at the next boundary so
+  // exactly one beat advances the moment the clip ends (never skipping a zone).
+  if (beatIdx >= 0 && idx > beatIdx && VO.talking(beatIdx)) { storyTime = beats[beatIdx + 1].t; return; }
   if (idx !== beatIdx) {
     beatIdx = idx; const b = beats[idx];
     camOffset.set(b.cam[0], b.cam[1], b.cam[2]);
@@ -563,6 +602,7 @@ function startStory() {
   ui.titlecard.classList.remove('show'); ui.replay.hidden = true;
   ui.legend.classList.add('show');
   playing = true; paused = false; ended = false; storyTime = 0; beatIdx = -1; controls.enabled = false;
+  camBase.copy(camera.position);   // start the damped rig from wherever the idle framing left the camera
 }
 function seekZone(zi) {                       // jump within the tour timeline
   if (!playing) startStory();
@@ -660,6 +700,7 @@ function animate() {
     o.edges.material.opacity = THREE.MathUtils.damp(o.edges.material.opacity, active ? 1 : 0.3, 4, dt);
     o.fill.material.opacity = THREE.MathUtils.damp(o.fill.material.opacity, active ? 0.14 : 0.08, 4, dt);
     o.glow.material.opacity = THREE.MathUtils.damp(o.glow.material.opacity, active ? 0.07 : 0.04, 4, dt);
+    o.nameDecal.material.opacity = THREE.MathUtils.damp(o.nameDecal.material.opacity, active ? 1 : 0.5, 4, dt);
     o.propMats.forEach(p => {
       p.m.opacity = THREE.MathUtils.damp(p.m.opacity, active ? p.base : p.base * 0.26, 4, dt);
     });
@@ -758,9 +799,10 @@ function animate() {
   // camera — cinematic rig during the tour, free orbit after
   if (playing && !ended) {
     desiredPos.copy(focusPoint).add(camOffset);
-    expApproach(camera.position, desiredPos, 1.6, dt);
+    expApproach(camBase, desiredPos, 1.6, dt);
     expApproach(desiredLook, focusPoint, 2.2, dt);
-    if (!reducedMotion) {
+    camera.position.copy(camBase);
+    if (!reducedMotion) {   // handheld sway — a fixed offset off the damped base, not fed back into it
       camera.position.x += Math.sin(time * 0.22) * 0.18;
       camera.position.y += Math.sin(time * 0.17 + 1) * 0.10;
     }
