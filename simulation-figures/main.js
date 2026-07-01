@@ -455,6 +455,7 @@ const ui = {
   replay: document.getElementById('replayBtn'), start: document.getElementById('startBtn'),
   loading: document.getElementById('loading'), progress: document.getElementById('progress'),
   vignette: document.getElementById('vignette'), mute: document.getElementById('muteBtn'),
+  pause: document.getElementById('pauseBtn'),
   endcard: document.getElementById('endcard'), legend: document.getElementById('legend'),
   panel: document.getElementById('zonepanel'),
   zpCluster: document.getElementById('zpCluster'), zpTitle: document.getElementById('zpTitle'),
@@ -608,6 +609,7 @@ function startStory() {
   resetScene();
   Audio.resume(); Audio.startAmbient();
   ui.titlecard.classList.remove('show'); ui.replay.hidden = true;
+  ui.pause.hidden = false; ui.pause.textContent = '⏸ Pause';
   ui.legend.classList.add('show');
   playing = true; paused = false; ended = false; storyTime = 0; beatIdx = -1; controls.enabled = false;
   camBase.copy(camera.position);   // start the damped rig from wherever the idle framing left the camera
@@ -627,7 +629,7 @@ function onPick(zi) { if (ended) inspectZone(zi); else seekZone(zi); }
 function endStory() {
   ended = true; playing = false; paused = false;
   Audio.fadeMaster(0, 2.5);
-  ui.replay.hidden = false;
+  ui.pause.hidden = true; ui.replay.hidden = false;
   controls.target.copy(desiredLook); exploreTarget.set(0, 0.5, 0);
   controls.enabled = true;
 }
@@ -657,6 +659,23 @@ function toggleMute() {
 }
 ui.mute.addEventListener('click', toggleMute);
 
+// pause / resume the tour — freezes the timeline AND the narration, and reflects state on the
+// button so it stays in sync whether toggled by the button or the Space key.
+function setPaused(p) {
+  if (!playing || ended) return;
+  paused = p;
+  ui.pause.textContent = paused ? '▶ Resume' : '⏸ Pause';
+  ui.pause.setAttribute('aria-pressed', paused ? 'true' : 'false');
+  if (paused) { try { VO.el.pause(); } catch (e) {} }
+  else if (VO.available && !Audio.muted && VO.playingIdx >= 0 && !VO.clipEnded) {
+    try { VO.el.play().catch(() => {}); } catch (e) {}
+    // push the narration watchdog out past the time spent paused, so the beat still waits for the clip
+    VO.holdUntil = clock.elapsedTime + Math.max(0, (VO.dur[VO.playingIdx] || 12) - VO.el.currentTime) + 2;
+  }
+}
+function togglePause() { setPaused(!paused); }
+ui.pause.addEventListener('click', togglePause);
+
 // Silence this demo whenever its page is hidden or navigated away (e.g. switching
 // between the landing page and the other demo) so a backgrounded/bfcached page can't
 // keep playing and overlap the one in view. Resume only if it was mid-play.
@@ -681,7 +700,7 @@ renderer.domElement.addEventListener('pointerup', e => {
 
 // presenter keyboard controls
 window.addEventListener('keydown', (e) => {
-  if (e.key === ' ') { e.preventDefault(); if (playing) paused = !paused; }
+  if (e.key === ' ') { e.preventDefault(); togglePause(); }
   else if (e.key === 'ArrowRight') { onPick(Math.min(Math.max(activeZone, 0) + 1, ZONES.length - 1)); }
   else if (e.key === 'ArrowLeft')  { onPick(Math.max(Math.max(activeZone, 0) - 1, 0)); }
   else if (e.key === 'r' || e.key === 'R') { startStory(); }

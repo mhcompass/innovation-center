@@ -493,6 +493,7 @@ const ui = {
   loading: document.getElementById('loading'), progress: document.getElementById('progress'),
   vignette: document.getElementById('vignette'), mute: document.getElementById('muteBtn'),
   endcard: document.getElementById('endcard'), kpi: document.getElementById('kpi'),
+  pause: document.getElementById('pauseBtn'),
 };
 
 // evidence the live-fly trials produce — surfaced at Test & Eval to justify the gate.
@@ -720,6 +721,31 @@ function toggleMute() {
 }
 ui.mute.addEventListener('click', toggleMute);
 
+// pause / resume the walkthrough — freezes the timeline AND the narration. Not available while the
+// Decision Gate (or the iterate replay) is holding the story, since those manage `paused` themselves.
+function setPaused(p) {
+  if (!playing || ended || gateOpen || iterating) return;
+  paused = p;
+  if (paused) { try { VO.el.pause(); } catch (e) {} }
+  else if (VO.available && !Audio.muted && VO.el.src && !VO.el.ended) { try { VO.el.play().catch(() => {}); } catch (e) {} }
+  refreshPauseBtn();
+}
+function togglePause() { setPaused(!paused); }
+ui.pause.addEventListener('click', togglePause);
+
+// single source of truth for the button's visibility + label — ticked each frame so it stays correct
+// across start, seek, the gate, the iterate loop and the end card without wiring every call site.
+let _pauseUiState = null;
+function refreshPauseBtn() {
+  const s = (!playing || ended || gateOpen || iterating) ? 'hidden' : (paused ? 'resume' : 'pause');
+  if (s === _pauseUiState) return;
+  _pauseUiState = s;
+  if (s === 'hidden') { ui.pause.hidden = true; return; }
+  ui.pause.hidden = false;
+  ui.pause.textContent = s === 'resume' ? '▶ Resume' : '⏸ Pause';
+  ui.pause.setAttribute('aria-pressed', s === 'resume' ? 'true' : 'false');
+}
+
 // Silence this demo whenever its page is hidden or navigated away (e.g. switching
 // between the landing page and the other demo) so a backgrounded/bfcached page can't
 // keep playing and overlap the one in view. Resume only if it was mid-play.
@@ -732,7 +758,7 @@ window.addEventListener('pagehide', silenceOnLeave);
 
 // presenter keyboard controls
 window.addEventListener('keydown', (e) => {
-  if (e.key === ' ') { e.preventDefault(); if (playing && !gateOpen) paused = !paused; }
+  if (e.key === ' ') { e.preventDefault(); togglePause(); }
   else if (e.key === 'ArrowRight') { seek(Math.min((beats[Math.max(beatIdx,0)].stage) + 1, N - 1)); }
   else if (e.key === 'ArrowLeft')  { seek(Math.max((beats[Math.max(beatIdx,0)].stage) - 1, 0)); }
   else if (e.key === 'r' || e.key === 'R') { startStory(); }
@@ -751,6 +777,7 @@ function animate() {
 
   if (playing && !paused) storyTime += dt;
   if (playing) updateStory(storyTime);
+  refreshPauseBtn();
 
   // token travel along the straight rail
   token._u = THREE.MathUtils.damp(token._u ?? 0, THREE.MathUtils.clamp(targetU, 0, 1), 2.4, dt);
