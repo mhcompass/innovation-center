@@ -120,8 +120,16 @@ function floorLabelTexture(text, hex) {
   x.font = font(fs);
   while (x.measureText(label).width > FLOORLBL_W - 70 && fs > 34) { fs -= 4; x.font = font(fs); }
   x.textAlign = 'center'; x.textBaseline = 'middle';
-  x.shadowColor = css; x.shadowBlur = 22;
-  x.fillStyle = css; x.fillText(label, FLOORLBL_W / 2, FLOORLBL_H / 2 + 4);
+  const cx = FLOORLBL_W / 2, cy = FLOORLBL_H / 2 + 4;
+  // core kept as a *light tint* of the cluster hue (halfway to white) — bright enough to read on the
+  // same-colour tile, but still clearly amber/cyan/teal rather than washing out to white.
+  const ch = i => (hex >> i) & 255;
+  const lite = m => `rgb(${Math.round(ch(16) + (255 - ch(16)) * m)},${Math.round(ch(8) + (255 - ch(8)) * m)},${Math.round(ch(0) + (255 - ch(0)) * m)})`;
+  x.shadowColor = css; x.shadowBlur = 8;               // faint halo — just enough to lift off the tile
+  x.fillStyle = css; x.fillText(label, cx, cy);
+  x.shadowBlur = 0;
+  x.lineWidth = 8; x.strokeStyle = 'rgba(2,6,14,0.7)'; x.strokeText(label, cx, cy); // crisp dark edge → letters stay legible
+  x.fillStyle = lite(0.34); x.fillText(label, cx, cy); // solid tinted core (more colour, less white)
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
 }
 
@@ -414,7 +422,7 @@ const zoneObjs = ZONES.map((z, i) => {
   const nameDecal = new THREE.Mesh(
     new THREE.PlaneGeometry(tileW - 1, decalH),
     new THREE.MeshBasicMaterial({ map: floorLabelTexture(z.name, cl.color), transparent: true,
-      opacity: 0.5, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
+      opacity: 0.92, depthWrite: false, toneMapped: false }));
   nameDecal.rotation.x = -Math.PI / 2;
   nameDecal.position.set(0, tileH + 0.03, tileD / 2 - 0.2 - decalH / 2);
   grp.add(nameDecal);
@@ -700,7 +708,7 @@ function animate() {
     o.edges.material.opacity = THREE.MathUtils.damp(o.edges.material.opacity, active ? 1 : 0.3, 4, dt);
     o.fill.material.opacity = THREE.MathUtils.damp(o.fill.material.opacity, active ? 0.14 : 0.08, 4, dt);
     o.glow.material.opacity = THREE.MathUtils.damp(o.glow.material.opacity, active ? 0.07 : 0.04, 4, dt);
-    o.nameDecal.material.opacity = THREE.MathUtils.damp(o.nameDecal.material.opacity, active ? 1 : 0.5, 4, dt);
+    o.nameDecal.material.opacity = THREE.MathUtils.damp(o.nameDecal.material.opacity, active ? 1 : 0.92, 4, dt);
     o.propMats.forEach(p => {
       p.m.opacity = THREE.MathUtils.damp(p.m.opacity, active ? p.base : p.base * 0.26, 4, dt);
     });
