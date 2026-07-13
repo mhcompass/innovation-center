@@ -23,19 +23,19 @@ const ZONES = [
   { n: 1, cl: 'A', x: -14, z: -6, name: 'Mission Framing & Collaboration',
     purpose: 'Where challenges are defined — workshops, leadership sessions, and classified or sensitive framing.',
     caps: ['Floor-to-ceiling writable walls', '“Mission Wall” of active challenges', 'Private secure pods for sensitive work', 'Modular, reconfigurable furniture'] },
-  { n: 6, cl: 'A', x: -14, z: 6, name: 'Knowledge & Research Hub',
+  { n: 2, cl: 'A', x: -14, z: 6, name: 'Knowledge & Research Hub',
     purpose: 'The memory of the center — every challenge leaves reusable knowledge behind.',
     caps: ['Emerging-tech & threat-intelligence library', 'Commercial innovation scans', 'Technology scouting & horizon watch', 'Searchable archive of past missions'] },
-  { n: 2, cl: 'B', x: 0, z: -6, name: 'Digital Experimentation Lab',
+  { n: 3, cl: 'B', x: 0, z: -6, name: 'Digital Experimentation Lab',
     purpose: 'Model and prove it in software before touching hardware — simulate, analyse, decide.',
     caps: ['AR / VR rigs', 'Digital-twin environment', 'Simulation & scenario sandbox', 'AI / data-analysis bench'] },
-  { n: 3, cl: 'B', x: 0, z: 6, name: 'Rapid Prototyping & Integration Lab',
+  { n: 4, cl: 'B', x: 0, z: 6, name: 'Rapid Prototyping & Integration Lab',
     purpose: 'Where ideas become things — and physical meets digital on the integration bay.',
     caps: ['3D printing, including metals', 'Electronics & rapid-PCB bench', 'Materials testing', 'Sensor / wearable integration bay'] },
-  { n: 4, cl: 'C', x: 14, z: -6, name: 'Test & Evaluation Area',
+  { n: 5, cl: 'C', x: 14, z: -6, name: 'Test & Evaluation Area',
     purpose: 'Controlled, instrumented evaluation — hard evidence before any field exposure.',
     caps: ['Instrumented test rigs', 'Controlled evaluation protocols', 'Evidence & data capture', 'Repeatable measurement'] },
-  { n: 5, cl: 'C', x: 14, z: 6, name: 'Showcase & Demonstration Area',
+  { n: 6, cl: 'C', x: 14, z: 6, name: 'Showcase & Demonstration Area',
     purpose: 'Where the center tells its story — and attracts talent, partners, and budget.',
     caps: ['Live demo stations for VIPs & partners', '“From Idea to Field” timeline walls', 'Gallery of evolved prototypes', 'Leadership briefing space'] },
 ];
@@ -503,16 +503,16 @@ const pips = ZONES.map((_, i) => {
   return p;
 });
 
-// beats — intro wide → one per zone (tour order 1,6,2,3,4,5) → finale wide.
+// beats — intro wide → one per zone (tour order 1,2,3,4,5,6) → finale wide.
 // `zone` is an index into ZONES (-1 = wide framing shot). `cam` is the camera offset from focus.
 const beats = [
   { t: 0, zone: -1, cam: [0, 26, 38], cap: 'An innovation center isn’t a building — it’s a capability you can walk through.' },
-  { t: 0, zone: 0,  cam: [3.2, 6.8, 10], cap: 'Think Tank · Zone 1 — Mission Framing. A raw problem becomes a sharp, defined challenge.' },
-  { t: 0, zone: 1,  cam: [3.2, 6.8, 10], cap: 'Think Tank · Zone 6 — Knowledge Hub. The memory of the center; every challenge leaves knowledge.' },
-  { t: 0, zone: 2,  cam: [3.2, 6.8, 10], cap: 'Workshop Floor · Zone 2 — Digital Experimentation. Prove it in a digital twin before cutting metal.' },
-  { t: 0, zone: 3,  cam: [3.2, 6.8, 10], cap: 'Workshop Floor · Zone 3 — Rapid Prototyping & Integration. Where ideas become instrumented things.' },
-  { t: 0, zone: 4,  cam: [3.2, 6.8, 10], cap: 'Showcase · Zone 4 — Test & Evaluation. Controlled rigs turn demonstrators into hard evidence.' },
-  { t: 0, zone: 5,  cam: [3.2, 6.8, 10], cap: 'Showcase · Zone 5 — Demonstration. Where the center tells its story — and attracts budget.' },
+  { t: 0, zone: 0,  cam: [3.2, 6.8, 10], cap: 'Think Tank · Zone 1 — Mission Framing.<br>A raw problem becomes a sharp, defined challenge.' },
+  { t: 0, zone: 1,  cam: [3.2, 6.8, 10], cap: 'Think Tank · Zone 2 — Knowledge Hub.<br>The memory of the center; every challenge leaves knowledge.' },
+  { t: 0, zone: 2,  cam: [3.2, 6.8, 10], cap: 'Workshop Floor · Zone 3 — Digital Experimentation.<br>Prove it in a digital twin before cutting metal.' },
+  { t: 0, zone: 3,  cam: [3.2, 6.8, 10], cap: 'Workshop Floor · Zone 4 — Rapid Prototyping & Integration.<br>Where ideas become instrumented things.' },
+  { t: 0, zone: 4,  cam: [3.2, 6.8, 10], cap: 'Showcase · Zone 5 — Test & Evaluation.<br>Controlled rigs turn demonstrators into hard evidence.' },
+  { t: 0, zone: 5,  cam: [3.2, 6.8, 10], cap: 'Showcase · Zone 6 — Demonstration.<br>Where the center tells its story — and attracts budget.' },
   { t: 0, zone: -1, cam: [0, 30, 42], cap: 'Six zones. One capability — the physical expression of an innovation operating system.' },
 ];
 // pace the beats from the narration: each caption holds until its clip ends + a short gap.
@@ -543,7 +543,7 @@ const camBase = new THREE.Vector3(0, 26, 40);
 
 const tileCenter = i => new THREE.Vector3(ZONES[i].x, 1.4, ZONES[i].z);
 
-function setCaption(text) { ui.caption.textContent = text; ui.caption.classList.add('show'); }
+function setCaption(text) { ui.caption.innerHTML = text; ui.caption.classList.add('show'); }
 
 function openPanel(i) {
   const z = ZONES[i], cl = CLUSTERS[z.cl];
