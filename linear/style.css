@@ -75,9 +75,9 @@ html,body{height:100%;overflow:hidden;background:#03050a;color:var(--ink)}
   transition:opacity .8s ease, transform .8s ease;
 }
 #titlecard.show{opacity:1;pointer-events:auto}
-#titlecard .eyebrow{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:14px}
-#titlecard h1{font-size:clamp(34px,6vw,72px);line-height:1.02;font-weight:800;letter-spacing:-.02em}
-#titlecard p{max-width:640px;margin:18px auto 28px;color:var(--muted);font-size:16px;line-height:1.6}
+#titlecard .eyebrow{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:54px}
+#titlecard h1{font-size:clamp(34px,6vw,72px);line-height:1.28;font-weight:800;letter-spacing:-.02em}
+#titlecard p{max-width:640px;margin:60px auto 50px;color:var(--muted);font-size:16px;line-height:1.6}
 #titlecard p b{color:var(--ink);font-weight:700}
 .hint{display:block;margin-top:16px;color:var(--muted);font-size:12px;opacity:.7}
 
